@@ -1,0 +1,5 @@
+---
+- name: Create overlays for resource quotas
+  hosts: localhost
+  tasks:
+    - include: playbooks/create_quotas.yml

@@ -1,0 +1,29 @@
+---
+- name: Create Kustomize overlay for Resource Quotas
+  hosts: localhost
+  gather_facts: false
+  vars:
+    # Define the namespace and resource quota limits
+    namespace_name: mynamespace
+    cpu_limit: "2"
+    memory_limit: "2Gi"
+
+  tasks:
+    - name: Create Kustomize overlay directory
+      file:
+        path: "{{ playbook_dir }}/{{ namespace_name }}"
+        state: directory
+
+    - name: Create resource quota YAML
+      template:
+        src: resource_quota.yml.j2
+        dest: "{{ playbook_dir }}/{{ namespace_name }}/resource-quota.yaml"
+      tags:
+        - create_yaml
+
+    - name: Generate Kustomization file
+      template:
+        src: kustomization.yml.j2
+        dest: "{{ playbook_dir }}/{{ namespace_name }}/kustomization.yaml"
+      tags:
+        - create_yaml
