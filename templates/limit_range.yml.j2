@@ -1,0 +1,25 @@
+---
+apiVersion: quota.openshift.io/v1
+kind: LimitRange
+metadata:
+  name: container-limits
+  namespace: {{ name.namespace }}
+  labels:
+    example.com/funding.source: {{ name.funding_source }}
+    example.com/funding.project: {{ name.project }}
+spec: 
+  limits:
+  - type: Pod
+    max:
+      cpu: {{ lrange.pod.max_cpu | default('12') }}
+      memory: {{ lrange.pod.max_memory | default('16Gi') }}
+    min:
+      cpu: {{ lrange.pod.min_cpu | default ('100m') }}
+      memory: {{ lrange.pod.min_memory | default('128Mi') }}
+  - type: Container
+    default:
+      cpu: {{ lrange.container.default_cpu | default('500m') }}
+      memory: {{ lrange.container.default_memory | default('512Mi') }}
+    defaultRequest:
+      cpu: {{ lrange.container.defaultRequest_cpu | default('50m') }}
+      memory: {{ lrange.container.defaultRequest_memory | default('128Mi') }}

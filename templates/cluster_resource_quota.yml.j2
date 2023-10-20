@@ -1,0 +1,22 @@
+---
+apiVersion: quota.openshift.io/v1
+kind: ClusterResourceQuota
+metadata:
+  labels:
+    example.com/funding.source: {{ name.funding_source }}
+    example.com/funding.project: {{ name.project }}
+  name: {{ name.project }}-quota
+spec:
+  quota:
+    hard:
+      requests.memory: {{ requests.memory }}
+      requests.cpu:: {{ requests.cpu }}
+      pods: {{ requests.pods }}
+      requests.storage: {{ requests.storage }}
+      limits.cpu: {{ limits.cpu }}
+      limits.memory: {{ limits.memory }}
+  selector:
+    labels:
+      matchLabels:
+        example.com/funding.source: {{ name.funding_source }}
+        example.com/funding.project: {{ name.project }}

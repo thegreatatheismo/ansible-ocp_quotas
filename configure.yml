@@ -1,0 +1,32 @@
+---
+- hosts: localhost
+  vars:
+  _ansible_dir: /tmp/ansible/templates
+  name:
+    funding_source: funding1
+    project: project1
+    namespace:
+      - namespace1
+      - namespace2
+    requests:
+      pods: "2"
+      cpu: "2"
+      memory: "4Gi"
+      storage: "100Gi"
+    limits:
+      cpu: "4"
+      memory: "8Gi"
+    lrange:
+      pod:
+        max_cpu:
+        max_memory:
+        min_cpu:
+        min_memory:
+      container:
+        default_cpu:
+        default_memory:
+        defaultRequest_cpu:
+        defaultRequest_memory:
+
+  tasks:
+    - include: playbooks/quota_create.yml

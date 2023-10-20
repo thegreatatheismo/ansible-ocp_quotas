@@ -1,0 +1,20 @@
+---
+- name: Create Kustomize overlay directory
+  file:
+    path: "{{ _ansible_dir }}"
+    state: directory
+
+- name: Create CRQ yml
+  template: 
+    src: templates/clusetr_resource_quota.yml.j2
+    dest: "{{ _ansible_dir }}/crq-{{ namespace.name }}.yml"
+
+- name: Create LR yml
+  template:
+    src: templates/limit_range.yml.j2
+    dest: "{{ _ansible_dir }}/lr-{{ name.project }}-{{ namespace.name }}.yml"
+
+- name: Generate Kustomize
+  template: 
+    src: templates/kustomization.yml.j2
+    dest: dest: "{{ _ansible_dir }}/kustomization.yml"
