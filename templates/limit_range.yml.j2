@@ -1,9 +1,10 @@
+{% for n in name_list %}
 ---
 apiVersion: quota.openshift.io/v1
 kind: LimitRange
 metadata:
   name: container-limits
-  namespace: {{ name.namespace }}
+  namespace: {{ n }}
   labels:
     example.com/funding.source: {{ name.funding_source }}
     example.com/funding.project: {{ name.project }}
@@ -23,3 +24,4 @@ spec:
     defaultRequest:
       cpu: {{ lrange.container.defaultRequest_cpu | default('50m') }}
       memory: {{ lrange.container.defaultRequest_memory | default('128Mi') }}
+{% endfor %}
