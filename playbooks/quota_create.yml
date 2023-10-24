@@ -6,17 +6,17 @@
 
 - name: Check to see if the project quota already exists:
   stat:
-    path: "{{ _ansible_dir }}/crq-{{ namespace.name }}.yml"
+    path: "{{ _ansible_dir }}/crq-{{ name.namespace }}.yml"
   register: project_quota
 
 - name: Check to see if the project quota already exists:
   stat:
-    path: "{{ _ansible_dir }}/lr-{{ name.project }}-{{ namespace.name }}.yml"
+    path: "{{ _ansible_dir }}/lr-{{ name.project }}-{{ name.namespace }}.yml"
   register: project_limit_range
 
 - name: Slurp
   slurp:
-    src: "{{ _ansible_dir }}/lr-{{ name.project }}-{{ namespace.name }}.yml"
+    src: "{{ _ansible_dir }}/lr-{{ name.project }}-{{ name.namespace }}.yml"
   register: slurp_lr
   when: project_limit_range.stat.exists
 
