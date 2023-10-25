@@ -4,12 +4,12 @@
     path: "{{ _ansible_dir }}"
     state: directory
 
-- name: Check to see if the project quota already exists:
+- name: Check to see if the project quota already exists
   stat:
     path: "{{ _ansible_dir }}/crq-{{ name.namespace }}.yml"
   register: project_quota
 
-- name: Check to see if the project quota already exists:
+- name: Check to see if the project quota already exists
   stat:
     path: "{{ _ansible_dir }}/lr-{{ name.project }}-{{ name.namespace }}.yml"
   register: project_limit_range
@@ -46,4 +46,4 @@
 - name: Generate Kustomize
   template: 
     src: templates/kustomization.yml.j2
-    dest: dest: "{{ _ansible_dir }}/kustomization.yml"
+    dest: "{{ _ansible_dir }}/kustomization.yml"
