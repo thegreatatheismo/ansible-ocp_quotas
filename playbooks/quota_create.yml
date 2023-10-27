@@ -28,7 +28,8 @@
 #FIXME
 - name: Initial name_list
   set_fact:
-    name_list: "{{ name_list + item }}"
+#    name_list: "{{ name_list + item }}"
+    name_list: "{{ name_list|default([]) + [ item ] }}"
   loop: 
     - "{{ name.namespace }}"
     - slurp_lr.metadata.namespace
