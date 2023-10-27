@@ -6,36 +6,50 @@
 
 - name: Check to see if the project quota already exists
   stat:
-    path: "{{ _ansible_dir }}/crq-{{ name.namespace }}.yml"
+    path: "{{ _ansible_dir }}/crq-{{ name.project }}.yml"
   register: project_quota
 
-- name: Check to see if the project quota already exists
+- name: Check to see if the limit range already exists
   stat:
-    path: "{{ _ansible_dir }}/lr-{{ name.project }}-{{ name.namespace }}.yml"
+    path: "{{ _ansible_dir }}/lr-{{ name.project }}.yml"
   register: project_limit_range
 
 - name: Slurp
   slurp:
-    src: "{{ _ansible_dir }}/lr-{{ name.project }}-{{ name.namespace }}.yml"
+    src: "{{ _ansible_dir }}/lr-{{ name.project }}.yml"
   register: slurp_lr
   when: project_limit_range.stat.exists
 
+#Temp - show the list for clarity
+- name: Print slurp_lr
+  debug:
+    msg: "{{ slurp_lr.content | b64decode }}"
+ 
 #FIXME
 - name: Initial name_list
   set_fact:
-    name_list: "{{ slurp_lr concatentated metadata.name into single list }}"
-
-#TODO: Ensure `name_list` has a default value of [] prior to slurping
-- name: Add namespace to list
-  set_fact:
-    name_list: "{{ name_list + item }}" 
+    name_list: "{{ name_list + item }}"
   loop: 
     - "{{ name.namespace }}"
-  when: project_limit_range.stat.exists
+    - slurp_lr.metadata.namespace
+#  when: project_limit_range.stat.exists
+
+#Temp - show the list for clarity
+- name: Print name_list
+  debug:
+    var: name_list
+
+#TODO: Ensure `name_list` has a default value of [] prior to slurping
+#- name: Add namespace to list
+#  set_fact:
+#    name_list: "{{ name_list + item }}" 
+#  loop: 
+#    - "{{ name.namespace }}"
+#  when: project_limit_range.stat.exists
 
 - name: Create CRQ yml
   template: 
-    src: templates/clusetr_resource_quota.yml.j2
+    src: templates/cluster_resource_quota.yml.j2
     dest: "{{ _ansible_dir }}/crq-{{ name.project }}.yml"
 
 - name: Create LR yml
