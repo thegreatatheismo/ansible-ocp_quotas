@@ -2,7 +2,6 @@
 - hosts: localhost
   vars:
     _ansible_dir: /tmp/ansible/templates
-    slurp_lr: []
     name:
       funding_source: funding1
       project: project1
