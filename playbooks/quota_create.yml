@@ -14,39 +14,23 @@
     path: "{{ _ansible_dir }}/lr-{{ name.project }}.yml"
   register: project_limit_range
 
-- name: Slurp
-  slurp:
-    src: "{{ _ansible_dir }}/lr-{{ name.project }}.yml"
-  register: slurp_lr
-  when: project_limit_range.stat.exists
+- name: Register the limit ranges 
+  include_vars: 
+    file: "{{ item }}"
+    name: "limit_ranges"
+  register: lrs
+  with_fileglob:
+    - lr-*.yml
+    - lr-*.yaml
 
-#Temp - show the list for clarity
-- name: Print slurp_lr
-  debug:
-    msg: "{{ slurp_lr.content | b64decode }}"
- 
-#FIXME
-- name: Initial name_list
+- name: Pull the relevant data and assign it to name_list
   set_fact:
-#    name_list: "{{ name_list + item }}"
-    name_list: "{{ name_list|default([]) + [ item ] }}"
-  loop: 
-    - "{{ name.namespace }}"
-    - slurp_lr.metadata.namespace
-#  when: project_limit_range.stat.exists
+    name_list: "{{ lrs.results | map(attribute='ansible_facts') | map(attribute='limit_ranges') | map(attribute='metadata') | map(attribute='namespace') }}"
 
 #Temp - show the list for clarity
 - name: Print name_list
   debug:
     var: name_list
-
-#TODO: Ensure `name_list` has a default value of [] prior to slurping
-#- name: Add namespace to list
-#  set_fact:
-#    name_list: "{{ name_list + item }}" 
-#  loop: 
-#    - "{{ name.namespace }}"
-#  when: project_limit_range.stat.exists
 
 - name: Create CRQ yml
   template: 
