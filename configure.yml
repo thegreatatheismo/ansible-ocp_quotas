@@ -7,7 +7,6 @@
       project: project1
       namespace:
         - namespace1
-        - namespace2
     requests:
       pods: "2"
       cpu: "2"
@@ -20,7 +19,7 @@
       pod:
         max_cpu: 1
         max_memory: 1
-        min_cpu: 1
+        min_cpu: 3
         min_memory: 1
       container:
         default_cpu: 1

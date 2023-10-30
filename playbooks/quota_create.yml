@@ -4,33 +4,28 @@
     path: "{{ _ansible_dir }}"
     state: directory
 
-- name: Check to see if the project quota already exists
-  stat:
-    path: "{{ _ansible_dir }}/crq-{{ name.project }}.yml"
-  register: project_quota
+#- name: Check to see if the project quota already exists
+#  stat:
+#    path: "{{ _ansible_dir }}/crq-{{ name.project }}.yml"
+#  register: project_quota
 
-- name: Check to see if the limit range already exists
-  stat:
-    path: "{{ _ansible_dir }}/lr-{{ name.project }}.yml"
-  register: project_limit_range
+#- name: Check to see if the limit range already exists
+#  stat:
+#    path: "{{ _ansible_dir }}/lr-{{ name.project }}-{{ name.namespace }}.yml"
+#  register: project_limit_range
 
-- name: Register the limit ranges 
-  include_vars: 
-    file: "{{ item }}"
-    name: "limit_ranges"
-  register: lrs
-  with_fileglob:
-    - lr-*.yml
-    - lr-*.yaml
+#- name: Register the limit ranges 
+#  include_vars: 
+#    file: "{{ item }}"
+#    name: "limit_ranges"
+#  register: lrs
+#  with_fileglob:
+#    - "lr-{{ name.project }}-*.yml"
+#    - "lr-{{ name.project }}-*.yaml"
 
-- name: Pull the relevant data and assign it to name_list
-  set_fact:
-    name_list: "{{ lrs.results | map(attribute='ansible_facts') | map(attribute='limit_ranges') | map(attribute='metadata') | map(attribute='namespace') }}"
-
-#Temp - show the list for clarity
-- name: Print name_list
-  debug:
-    var: name_list
+#- name: Pull the relevant data and assign it to name_list
+#  set_fact:
+#    name_list: "{{ lrs.results | map(attribute='ansible_facts') | map(attribute='limit_ranges') | map(attribute='metadata') | map(attribute='namespace') }}"
 
 - name: Create CRQ yml
   template: 
@@ -40,7 +35,8 @@
 - name: Create LR yml
   template:
     src: templates/limit_range.yml.j2
-    dest: "{{ _ansible_dir }}/lr-{{ name.project }}.yml"
+    dest: "{{ _ansible_dir }}/lr-{{ name.project }}-{{ item }}.yml"
+  loop: "{{name.namespace }}"
 
 - name: Generate Kustomize
   template: 
