@@ -5,6 +5,10 @@
     state: directory
 
 - name: Check if namespace(s) already exist
+  ansible.builtin.uri:
+    url: http://www.example.com/k8s/cluster/projects/"{{ name.namespace }}"
+  register: ocp_namespace
+
 
 - name: Create namespace(s) if it(they) doesn't(don't) exist
   kubernetes.core.k8s:
@@ -13,6 +17,7 @@
     validate_certs: no
     kind: Namespace
     state: present
+  when: ocp_namespace.stat.exists
 
 
 #- name: Check to see if the project quota already exists
