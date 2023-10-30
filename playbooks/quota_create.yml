@@ -4,6 +4,17 @@
     path: "{{ _ansible_dir }}"
     state: directory
 
+- name: Check if namespace(s) already exist
+
+- name: Create namespace(s) if it(they) doesn't(don't) exist
+  kubernetes.core.k8s:
+    name: "{{ name.namespace }}"
+    api_version: v1
+    validate_certs: no
+    kind: Namespace
+    state: present
+
+
 #- name: Check to see if the project quota already exists
 #  stat:
 #    path: "{{ _ansible_dir }}/crq-{{ name.project }}.yml"
