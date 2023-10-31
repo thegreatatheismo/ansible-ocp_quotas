@@ -4,17 +4,57 @@
     path: "{{ _ansible_dir }}"
     state: directory
 
+- name: Check if namespace(s) already exist
+  ansible.builtin.uri:
+    url: http://www.example.com/k8s/cluster/projects/"{{ name.namespace }}"
+  register: ocp_namespace
+
+
+- name: Create namespace(s) if it(they) doesn't(don't) exist
+  kubernetes.core.k8s:
+    name: "{{ name.namespace }}"
+    api_version: v1
+    validate_certs: no
+    kind: Namespace
+    state: present
+  when: ocp_namespace.stat.exists
+
+
+#- name: Check to see if the project quota already exists
+#  stat:
+#    path: "{{ _ansible_dir }}/crq-{{ name.project }}.yml"
+#  register: project_quota
+
+#- name: Check to see if the limit range already exists
+#  stat:
+#    path: "{{ _ansible_dir }}/lr-{{ name.project }}-{{ name.namespace }}.yml"
+#  register: project_limit_range
+
+#- name: Register the limit ranges 
+#  include_vars: 
+#    file: "{{ item }}"
+#    name: "limit_ranges"
+#  register: lrs
+#  with_fileglob:
+#    - "lr-{{ name.project }}-*.yml"
+#    - "lr-{{ name.project }}-*.yaml"
+
+#- name: Pull the relevant data and assign it to name_list
+#  set_fact:
+#    name_list: "{{ lrs.results | map(attribute='ansible_facts') | map(attribute='limit_ranges') | map(attribute='metadata') | map(attribute='namespace') }}"
+
 - name: Create CRQ yml
   template: 
-    src: templates/clusetr_resource_quota.yml.j2
-    dest: "{{ _ansible_dir }}/crq-{{ namespace.name }}.yml"
+    src: templates/cluster_resource_quota.yml.j2
+    dest: "{{ _ansible_dir }}/crq-{{ name.project }}.yml"
 
 - name: Create LR yml
   template:
     src: templates/limit_range.yml.j2
-    dest: "{{ _ansible_dir }}/lr-{{ name.project }}-{{ namespace.name }}.yml"
+    dest: "{{ _ansible_dir }}/lr-{{ name.project }}-{{ item }}.yml"
+  loop: "{{name.namespace }}"
 
 - name: Generate Kustomize
   template: 
     src: templates/kustomization.yml.j2
-    dest: dest: "{{ _ansible_dir }}/kustomization.yml"
+    dest: "{{ _ansible_dir }}/kustomization.yml"

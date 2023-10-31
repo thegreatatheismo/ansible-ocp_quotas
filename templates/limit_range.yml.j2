@@ -3,7 +3,7 @@ apiVersion: quota.openshift.io/v1
 kind: LimitRange
 metadata:
   name: container-limits
-  namespace: {{ name.namespace }}
+  namespace: {{ item }}
   labels:
     example.com/funding.source: {{ name.funding_source }}
     example.com/funding.project: {{ name.project }}
